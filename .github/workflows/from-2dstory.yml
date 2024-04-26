@@ -30,7 +30,7 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config Release
 
     - name: Generate Video
       run: mkdir -p public && ${{github.workspace}}/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart public/output.mp4
