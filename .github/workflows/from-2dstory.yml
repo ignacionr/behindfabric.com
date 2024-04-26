@@ -23,18 +23,21 @@ jobs:
         repository: 'ignacionr/2dstory'
         ref: 'main'
         ssh-key: ${{ steps.setup-ssh.outputs.ssh-private-key }}
-        path: '/tmp/2dstory'
+        path: '2dstory'
    
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      run: cd /tmp/2dstory && cmake -B /tmp/2dstory/build -DCMAKE_BUILD_TYPE=Release
+      run: cd 2dstory && cmake -B build -DCMAKE_BUILD_TYPE=Release
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build /tmp/2dstory/build --config Release
+      run: cmake --build ${{github.workspace}}/2dstory/build --config Release
 
     - name: Generate Video
-      run: mkdir -p /tmp/public && /tmp/2dstory/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart /tmp/public/output.mp4
+      run: mkdir -p /tmp/public && ${{github.workspace}}/2dstory/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart /tmp/public/output.mp4
+
+    - name: remove build stuff
+      run: rm -Rf ${{github.workspace}}/2dstory
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
