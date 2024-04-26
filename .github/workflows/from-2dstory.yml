@@ -1,0 +1,41 @@
+name: Build and Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get Dependencies
+      run: sudo apt update && sudo apt -y install libx11-dev libpng-dev ffmpeg imagemagick
+
+    - name: Setup SSH Key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+    - name: Checkout the other repository
+      uses: actions/checkout@v2
+      with:
+        repository: 'ignacionr/2dstory'
+        ssh-key: ${{ steps.setup-ssh.outputs.ssh-private-key }}
+
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Generate Video
+      run: mkdir -p public && ${{github.workspace}}/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart public/output.mp4
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
