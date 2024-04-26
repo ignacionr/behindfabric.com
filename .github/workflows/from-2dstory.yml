@@ -34,7 +34,7 @@ jobs:
       run: cmake --build /tmp/build --config Release
 
     - name: Generate Video
-      run: mkdir -p /tmp/public && /tmp/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart /tmp/public/output.mp4
+      run: mkdir -p /tmp/public && cd 2dstory && /tmp/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart /tmp/public/output.mp4
 
     - name: remove build stuff
       run: rm -Rf ${{github.workspace}}/2dstory
