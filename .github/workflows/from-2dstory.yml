@@ -21,8 +21,8 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: 'ignacionr/2dstory'
-        ssh-key: ${{ steps.setup-ssh.outputs.ssh-private-key }}
-
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+   
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
