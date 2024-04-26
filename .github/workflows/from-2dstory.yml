@@ -33,10 +33,10 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config Release
 
     - name: Generate Video
-      run: mkdir -p public && ${{github.workspace}}/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart public/output.mp4
+      run: mkdir -p ${{github.workspace}}/public && ${{github.workspace}}/build/the-overcoat $1 | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart ${{github.workspace}}/public/output.mp4
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
+        publish_dir: ${{github.workspace}}/public
