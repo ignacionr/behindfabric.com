@@ -43,16 +43,12 @@ jobs:
         ssh-key: ${{ steps.setup-ssh.outputs.ssh-private-key }}
         path: '2dstory'
    
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      run: cd 2dstory && cmake -B /tmp/build -DCMAKE_BUILD_TYPE=Release
-
     - name: Build
-      # Build your program with the given configuration
-      run: cmake --build /tmp/build --config Release
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      run: cd 2dstory && ./build.sh
 
     - name: Generate Video
-      run: mkdir -p /tmp/public && cd 2dstory && /tmp/build/the-overcoat full | ffmpeg -f image2pipe -vcodec png -framerate 24 -i - -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p -movflags +faststart /tmp/public/output.mp4
+      run: cd 2dstory && ./release.sh
 
     - name: remove build stuff
       run: rm -Rf ${{github.workspace}}/2dstory
